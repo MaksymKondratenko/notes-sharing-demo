@@ -18,6 +18,7 @@ Dodatkowe zadanie: wymyśl / opisz / zaprojektuj / zaimplementuj dodatkową
 funkcjonalność, o którą warto byłoby wzbogacić aplikację.
 W razie pytań skontaktuj się z nami.
 ```
+
 Here are assumptions concluded from the task definition as well as from general logic:
 1) The goal is a solution for note sharing
 2) note should have a content and a title
@@ -33,18 +34,29 @@ Here are assumptions concluded from the task definition as well as from general 
 12) the user that shares a note has to be authenticated as an owner to be able to share a note
 13) the service should allow the authenticated user to share a note she owns
 14) the service should allow any other user in order to read the shared note to access it by a password
-15) password is issued by the service during a note share and is associated with it
-16) the service should allow also the authenticated user to read her own notes (and only owned notes)
-17) user authentication is not a core of the service and has to be done by another service
-18) for a sake of the current task authentication logic is not relevant thus the auth service will be stubbed to be able to authenticate two distinct users 
-19) the service is headless, i.e. has a plain API without UI head (front end is ahead of competence and interest of an implementor)
+15) note creation/update is out of scope of the service, so we are abstracting from how they have been created
+16) password is issued by the service during a note share and is associated with it
+17) the service should allow also the authenticated user to read her own notes (and only owned notes)
+18) user authentication is not a core of the service and has to be done by another service
+19) for a sake of the current task authentication logic is not relevant thus the auth service will be stubbed to be able to authenticate two distinct users 
+20) the service is headless, i.e. has a plain API without UI head (front end is ahead of competence and interest of an implementor)
+
+**Disclaimer:** an implementor is positioning himself as a person which interest is a back-end development.
+Since the area has so much to research, he does not plan to disperse attention for another huge area which is a front-end development.
+Thus, the goal of this implementation is to build a robust service with a clean API and leave UI implementation for a relevant person.
 
 ### Implementation
-
-GetNotesOwnedUseCase
-ReadNoteOwnedUseCase
-ShareNoteOwnedUseCase
-ReadNoteReceivedUseCase
+Based on the assumptions, we can define that the service should provide next functionalities:
+Basic features (MVP):
+1) for an authenticated user to share an owned note (providing optional TTL attribute): `ShareNoteOwnedUseCase`
+driven by `ShareNoteOwnedCommand`.
+2) for any user to read a shared note by providing a password: `ReadNoteReceivedUseCase` driven by `ReadNoteReceivedQuery`
+3) to facilitate the first functionality one the user would need to be able to get details about his own notes,
+so that for an authenticated use service to return owned notes: `GetNotesOwnedUseCase` driven by `GetNotesOwnedQuery`
+Additional features:
+4) for an authenticated user to get details about an owned note by its ID: `ReadNoteOwnedUseCase` driven by `ReadNoteOwnedQuery`
+5) once an authenticated user shares a note an email notification with the access password is sent to an address,
+provided by the note owner during a sharing request: `NotifyNoteSharedUseCase` driven by `NotifyNoteSharedCommand`
 
 Services are runnable as a jar with embedded container,
 or for more convenience as Dockerized images can be deployed to Kubernetes cluster/node.
@@ -121,7 +133,8 @@ Feel free to grab application logs by running `kubectl logs note-8f4d686fb-g5d6x
 6) try it out
 From Swagger UI:
 
-http://<kube_DNS_alias>:<node_port>/swagger-ui/#/
+**http://<kube_DNS_alias>:<node_port>/swagger-ui/#/**
+
 Get all notes:
 ```
 curl --location --request GET 'http://<kube_DNS_alias>:<node_port>/note/all' \
