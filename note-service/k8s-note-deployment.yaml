@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: note
+  labels:
+    app: note
+spec:
+  selector:
+    matchLabels:
+      app: note
+  template:
+    metadata:
+      labels:
+        app: note
+    spec:
+      containers:
+        - name: note
+          image: note-service:0.4
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: note-service
+spec:
+  type: NodePort
+  selector:
+    app: note
+  ports:
+    - protocol: TCP
+      port: 8080

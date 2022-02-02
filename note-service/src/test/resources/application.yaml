@@ -1,0 +1,4 @@
+redis:
+  server:
+    hostname: localhost
+    port: 6370

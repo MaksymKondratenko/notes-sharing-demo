@@ -1,0 +1,16 @@
+kube:
+  dns-alias: &dns kubernetes.docker.internal
+
+redis:
+  server:
+    hostname: *dns
+    port: 30431
+notification:
+  email:
+    hostname: *dns
+    port: 30464
+    service-address: notifications@note.io
+
+logging:
+  level:
+    org.mk: debug
