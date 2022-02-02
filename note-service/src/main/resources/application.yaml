@@ -11,6 +11,10 @@ notification:
     port: 30464
     service-address: notifications@note.io
 
+spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
 logging:
   level:
     org.mk: debug
