@@ -20,6 +20,11 @@ public class NoteSharedEventSink implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String eventChannelName = new String(message.getChannel(), StandardCharsets.UTF_8);
+        log.debug("Event channel name: {}", eventChannelName);
+        if(eventChannelName.split(":").length != 3) {
+            log.warn("Event coming from channel: {} is not supported. Skipping the notification.", eventChannelName);
+            return;
+        }
         UUID sharedNoteId = UUID.fromString(eventChannelName.split(":")[2]);
         log.debug("Received NoteShared event notification. Note id: {}.", sharedNoteId);
         notifyNoteSharedUseCase.runFor(new NotifyNoteSharedCommandImpl(sharedNoteId));
